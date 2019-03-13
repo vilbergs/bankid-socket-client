@@ -23,7 +23,11 @@ class App extends Component {
     componentDidMount() {
         this.socket = io('172.17.4.231:5000')
         this.socket.on('connect', () => this.setState({ connected: true }))
-        this.socket.on('success', () => this.setState({ authenticated: true }))
+        this.socket.on('success', (response) => {
+            const { token } = response
+            sessionStorage.setItem('token', token)
+            this.setState({ authenticated: true })
+        })
     }
 
     handleChange = (event) => {
@@ -35,44 +39,61 @@ class App extends Component {
     }
 
     render() {
+        const token = sessionStorage.getItem('token')
         return (
-            <Grid container spacing={24} justify="center">
-                <Grid item xs={4}>
-                    <Card>
-                        <CardContent>
-                            <Typography variant="h5" component="h2">
-                                Signera med BankID
-                            </Typography>
-                            <Typography
-                                component="p"
-                                style={{
-                                    color: this.state.connected
-                                        ? 'green'
-                                        : 'red',
-                                }}
-                            >
-                                ****
-                            </Typography>
-                            <TextField
-                                value={this.state.pnr}
-                                onChange={this.handleChange}
-                                id="standard-name"
-                                label="Personnummer"
-                                margin="normal"
-                            />
-                        </CardContent>
-                        <CardActions>
-                            <Button
-                                onClick={this.handleClick}
-                                color="primary"
-                                size="small"
-                            >
-                                Start
-                            </Button>
-                        </CardActions>
-                    </Card>
-                </Grid>
-            </Grid>
+            <>
+                {token !== null ? (
+                    <Grid container spacing={24} justify='center'>
+                        <Grid item xs={4}>
+                            <Card>
+                                <CardContent>
+                                    <Typography variant='h5' component='h2'>
+                                        Welcome!
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                ) : (
+                    <Grid container spacing={24} justify='center'>
+                        <Grid item xs={4}>
+                            <Card>
+                                <CardContent>
+                                    <Typography variant='h5' component='h2'>
+                                        Signera med BankID
+                                    </Typography>
+                                    <Typography
+                                        component='p'
+                                        style={{
+                                            color: this.state.connected
+                                                ? 'green'
+                                                : 'red',
+                                        }}
+                                    >
+                                        ****
+                                    </Typography>
+                                    <TextField
+                                        value={this.state.pnr}
+                                        onChange={this.handleChange}
+                                        id='standard-name'
+                                        label='Personnummer'
+                                        margin='normal'
+                                    />
+                                </CardContent>
+                                <CardActions>
+                                    <Button
+                                        onClick={this.handleClick}
+                                        color='primary'
+                                        size='small'
+                                    >
+                                        Start
+                                    </Button>
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    </Grid>
+                )}
+            </>
         )
     }
 }
