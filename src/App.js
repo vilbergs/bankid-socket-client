@@ -6,8 +6,10 @@ import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-
+import Axios from 'axios'
 import io from 'socket.io-client'
+
+const baseUrl = '127.0.0.1:5000'
 
 class App extends Component {
     constructor(props) {
@@ -16,18 +18,31 @@ class App extends Component {
             pnr: '',
             connected: false,
             authenticated: false,
+            token: sessionStorage.getItem('token'),
         }
     }
-    socket
 
     componentDidMount() {
-        this.socket = io('172.17.4.231:5000')
+        const { token } = this.state
+        this.socket = io(baseUrl)
         this.socket.on('connect', () => this.setState({ connected: true }))
         this.socket.on('success', (response) => {
             const { token } = response
             sessionStorage.setItem('token', token)
-            this.setState({ authenticated: true })
+            this.setState({ authenticated: true, token })
         })
+
+        if (token !== null) {
+            console.log(baseUrl + '/secret?token=' + token)
+            Axios(baseUrl + '/secret?token=' + token)
+                .then((response) => {
+                    console.log(response)
+                    this.setState({ authenticated: true })
+                })
+                .catch((response) => {
+                    console.log(response)
+                })
+        }
     }
 
     handleChange = (event) => {
@@ -38,11 +53,16 @@ class App extends Component {
         this.socket.emit('authenticateAndCollect', this.state.pnr)
     }
 
+    handleLogout = (e) => {
+        sessionStorage.removeItem('token')
+        this.setState({ authenticated: false })
+    }
+
     render() {
-        const token = sessionStorage.getItem('token')
+        const { authenticated } = this.state
         return (
             <>
-                {token !== null ? (
+                {authenticated ? (
                     <Grid container spacing={24} justify='center'>
                         <Grid item xs={4}>
                             <Card>
@@ -50,6 +70,9 @@ class App extends Component {
                                     <Typography variant='h5' component='h2'>
                                         Welcome!
                                     </Typography>
+                                    <button onClick={this.handleLogout}>
+                                        Logga ut
+                                    </button>
                                 </CardContent>
                             </Card>
                         </Grid>
