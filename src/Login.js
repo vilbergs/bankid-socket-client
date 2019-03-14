@@ -6,32 +6,20 @@ import CardActions from '@material-ui/core/CardActions'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import io from 'socket.io-client'
 import Snackbar from '@material-ui/core/Snackbar'
 
 const baseUrl = 'http://localhost:5000'
-const socket = io(baseUrl)
 
-const Login = ({ handleAuthenticate }) => {
-    const [open, setOpen] = useState(false)
+const Login = ({ handleAuthenticate, open, setOpen, socket }) => {
     const [pnr, setPnr] = useState('')
-
-    socket.on('connect', () => {
-        setOpen(true)
-    })
-
-    socket.on('success', (response) => {
-        const { token } = response
-        sessionStorage.setItem('token', token)
-        handleAuthenticate(true)
-    })
 
     const handleChange = (e) => {
         setPnr(e.target.value)
     }
 
     const handleClick = (e) => {
-        socket.emit('authenticateAndCollect', pnr)
+        // setDisabledButton(true)
+        socket.emit('authenticate', pnr)
     }
 
     return (
@@ -54,6 +42,7 @@ const Login = ({ handleAuthenticate }) => {
                     <CardActions>
                         <Button
                             onClick={handleClick}
+                            disabled={false}
                             color='primary'
                             size='small'
                         >
