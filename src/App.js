@@ -1,29 +1,46 @@
 import React, { useState } from 'react'
-import io from 'socket.io-client'
 import Grid from '@material-ui/core/Grid'
-import Main from './Main'
-import Snackbar from '@material-ui/core/Snackbar'
-
-const socket = io('http://localhost:5000')
+import Secret from './Secret'
+import Login from './Login'
+import Axios from 'axios'
+const baseUrl = 'http://localhost:5000'
 
 const App = (props) => {
-    const [open, setOpen] = useState(false)
+    const [authenticated, setAuthenticated] = useState(false)
+    const token = sessionStorage.getItem('token')
 
-    socket.on('connect', () => {
-        setOpen(true)
-    })
+    if (token !== null) {
+        var config = {
+            headers: { Authorization: 'bearer ' + token },
+        }
+
+        Axios.get(baseUrl + '/secret', config)
+            .then((response) => {
+                setAuthenticated(true)
+                console.log(response)
+            })
+            .catch((response) => {
+                console.log(response)
+            })
+    }
 
     return (
         <>
             <Grid container spacing={24} justify='center'>
-                <Main socket={socket} />
+                {authenticated ? (
+                    <Secret
+                        handleAuthenticate={(isAuthenticated) =>
+                            setAuthenticated(isAuthenticated)
+                        }
+                    />
+                ) : (
+                    <Login
+                        handleAuthenticate={(isAuthenticated) =>
+                            setAuthenticated(isAuthenticated)
+                        }
+                    />
+                )}
             </Grid>
-            <Snackbar
-                open={open}
-                autoHideDuration={4000}
-                onClose={() => setOpen(false)}
-                message={<span>BankId Connected</span>}
-            />
         </>
     )
 }
