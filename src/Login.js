@@ -36,32 +36,26 @@ const Login = ({ handleAuthenticate }) => {
 
     return (
         <>
-            <Grid item xs={4}>
-                <Card>
-                    <CardContent>
-                        <Typography variant='h5' component='h2'>
-                            Signera med BankID
-                        </Typography>
+            <Card>
+                <CardContent>
+                    <Typography variant='h5' component='h2'>
+                        Signera med BankID
+                    </Typography>
 
-                        <TextField
-                            value={pnr}
-                            onChange={handleChange}
-                            id='standard-name'
-                            label='Personnummer'
-                            margin='normal'
-                        />
-                    </CardContent>
-                    <CardActions>
-                        <Button
-                            onClick={handleClick}
-                            color='primary'
-                            size='small'
-                        >
-                            Start
-                        </Button>
-                    </CardActions>
-                </Card>
-            </Grid>
+                    <TextField
+                        value={pnr}
+                        onChange={handleChange}
+                        id='standard-name'
+                        label='Personnummer'
+                        margin='normal'
+                    />
+                </CardContent>
+                <CardActions>
+                    <Button onClick={handleClick} color='primary' size='small'>
+                        Start
+                    </Button>
+                </CardActions>
+            </Card>
             <Snackbar
                 open={open}
                 autoHideDuration={4000}
