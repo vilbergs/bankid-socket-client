@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography'
 import Axios from 'axios'
 import io from 'socket.io-client'
 
-const baseUrl = '127.0.0.1:5000'
+const baseUrl = 'http://localhost:5000'
 
 class App extends Component {
     constructor(props) {
@@ -23,7 +23,6 @@ class App extends Component {
     }
 
     componentDidMount() {
-        const { token } = this.state
         this.socket = io(baseUrl)
         this.socket.on('connect', () => this.setState({ connected: true }))
         this.socket.on('success', (response) => {
@@ -32,12 +31,20 @@ class App extends Component {
             this.setState({ authenticated: true, token })
         })
 
+        this.handleToken()
+    }
+
+    handleToken = () => {
+        const { token } = this.state
         if (token !== null) {
-            console.log(baseUrl + '/secret?token=' + token)
-            Axios(baseUrl + '/secret?token=' + token)
+            var config = {
+                headers: { Authorization: 'bearer ' + token },
+            }
+
+            Axios.get(baseUrl + '/secret', config)
                 .then((response) => {
-                    console.log(response)
                     this.setState({ authenticated: true })
+                    console.log(response)
                 })
                 .catch((response) => {
                     console.log(response)
