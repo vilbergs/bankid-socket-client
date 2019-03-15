@@ -39,7 +39,7 @@ const App = (props) => {
                 }}
                 justify='center'
             >
-                <Grid item xs sm={6}>
+                <Grid item xs={12} sm={6}>
                     {authenticated ? (
                         <Secret
                             handleAuthenticate={(isAuthenticated) =>
