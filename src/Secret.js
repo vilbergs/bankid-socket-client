@@ -13,20 +13,18 @@ const Secret = ({ handleAuthenticate }) => {
     }
 
     return (
-        <Grid item xs={4}>
-            <Card>
-                <CardContent>
-                    <Typography variant='h5' component='h2'>
-                        Welcome
-                    </Typography>
-                </CardContent>
-                <CardActions>
-                    <Button onClick={handleClick} color='primary' size='small'>
-                        Logga ut
-                    </Button>
-                </CardActions>
-            </Card>
-        </Grid>
+        <Card>
+            <CardContent>
+                <Typography variant='h5' component='h2'>
+                    Welcome
+                </Typography>
+            </CardContent>
+            <CardActions>
+                <Button onClick={handleClick} color='primary' size='small'>
+                    Logga ut
+                </Button>
+            </CardActions>
+        </Card>
     )
 }
 

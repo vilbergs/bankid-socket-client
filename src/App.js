@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import Menu from './Menu'
 import Grid from '@material-ui/core/Grid'
 import Secret from './Secret'
 import Login from './Login'
@@ -26,20 +28,32 @@ const App = (props) => {
 
     return (
         <>
-            <Grid container spacing={24} justify='center'>
-                {authenticated ? (
-                    <Secret
-                        handleAuthenticate={(isAuthenticated) =>
-                            setAuthenticated(isAuthenticated)
-                        }
-                    />
-                ) : (
-                    <Login
-                        handleAuthenticate={(isAuthenticated) =>
-                            setAuthenticated(isAuthenticated)
-                        }
-                    />
-                )}
+            <CssBaseline />
+            <Menu authenticated={authenticated} />
+            <Grid
+                container
+                spacing={8}
+                style={{
+                    margin: 0,
+                    width: '100%',
+                }}
+                justify='center'
+            >
+                <Grid item xs={12} sm={6}>
+                    {authenticated ? (
+                        <Secret
+                            handleAuthenticate={(isAuthenticated) =>
+                                setAuthenticated(isAuthenticated)
+                            }
+                        />
+                    ) : (
+                        <Login
+                            handleAuthenticate={(isAuthenticated) =>
+                                setAuthenticated(isAuthenticated)
+                            }
+                        />
+                    )}
+                </Grid>
             </Grid>
         </>
     )
