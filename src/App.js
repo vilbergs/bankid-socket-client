@@ -19,10 +19,10 @@ const App = (props) => {
         Axios.get(baseUrl + '/secret', config)
             .then((response) => {
                 setAuthenticated(true)
-                console.log(response)
+                console.log('response: ', response)
             })
             .catch((response) => {
-                console.log(response)
+                console.log('response: ', response)
             })
     }
 

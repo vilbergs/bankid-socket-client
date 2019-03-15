@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import Dialog from './BankIdDialog'
-
 import CardMedia from '@material-ui/core/CardMedia'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
@@ -12,7 +11,7 @@ import Button from '@material-ui/core/Button'
 import io from 'socket.io-client'
 import Snackbar from '@material-ui/core/Snackbar'
 
-const baseUrl = 'https://172.17.4.197:5000'
+const baseUrl = 'http://localhost:5000'
 const socket = io(baseUrl, { secure: true })
 
 const styles = {
@@ -31,12 +30,34 @@ const Login = ({ classes, handleAuthenticate }) => {
 
     socket.on('connect', () => {
         setOpen(true)
+
+        const orderRef = sessionStorage.getItem('orderRef')
+        if (null !== orderRef) {
+            socket.emit('collect', orderRef)
+            setDialogOpen(true)
+        }
+    })
+
+    socket.on('disconnect', (reason) => {
+        console.log(`Disconnected: ${reason}`)
+        setDialogOpen(false)
+    })
+
+    socket.on('orderRef', (orderRef) => {
+        sessionStorage.setItem('orderRef', orderRef)
+        socket.emit('collect', orderRef)
     })
 
     socket.on('success', (response) => {
         const { token } = response
+        sessionStorage.removeItem('orderRef')
         sessionStorage.setItem('token', token)
         handleAuthenticate(true)
+        setDialogOpen(false)
+    })
+
+    socket.on('failure', () => {
+        sessionStorage.removeItem('orderRef')
         setDialogOpen(false)
     })
 
@@ -45,7 +66,7 @@ const Login = ({ classes, handleAuthenticate }) => {
     }
 
     const handleClick = (e) => {
-        socket.emit('authenticateAndCollect', pnr)
+        socket.emit('authenticate', pnr)
         setDialogOpen(true)
     }
 
